@@ -22,7 +22,7 @@ def run_web_server():
     server.serve_forever()
 
 # Твой актуальный токен и ID
-BOT_TOKEN = "8223693755:AAH-cCy7_kzwtf_E1oMIybSH7pfZi7yU_UU"
+BOT_TOKEN = "8223693755:AAH-cCy7_kzwtf_E1oMiyBsH7pfZi7yU_UU"
 ADMIN_ID = 7311609911
 
 QUESTIONS = [
