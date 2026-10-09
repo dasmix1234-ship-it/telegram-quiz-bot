@@ -1,12 +1,30 @@
+import os
 import asyncio
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 
+# Встроенный микро-сервер, чтобы Render видел открытый порт и держал статус Live
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain")
+        self.end_headers()
+        self.wfile.write(b"OK")
+
+    def log_message(self, format, *args):
+        return
+
+def run_web_server():
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(("0.0.0.0", port), HealthCheckHandler)
+    server.serve_forever()
+
 # Твой актуальный токен и ID
-BOT_TOKEN = "8223693755:AAH-cCy7_kzwtf_E1oMiyBsH7pfZi7yU_UU"
+BOT_TOKEN = "8223693755:AAH-cCy7_kzwtf_E1oMIybSH7pfZi7yU_UU"
 ADMIN_ID = 7311609911
 
-# 15 интересных вопросов с паузой 15 секунд на ответ и 8 секунд между раундами
 QUESTIONS = [
     {"text": "1. Сколько литров слюны вырабатывает организм человека за всю среднюю жизнь?", "answer": 25000},
     {"text": "2. В каком году произошла так называемая «Война из-за свиньи» между США и Великобританией?", "answer": 1859},
@@ -133,6 +151,7 @@ async def collect_number(message: types.Message):
         current_answers[name] = val
 
 async def main():
+    threading.Thread(target=run_web_server, daemon=True).start()
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
